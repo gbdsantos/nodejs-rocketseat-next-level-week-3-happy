@@ -1,54 +1,62 @@
-import { Request, Response } from 'express'; 
+import { Request, Response } from 'express';
 
 import { getRepository } from 'typeorm';
 import Orphanage from '../models/Orphanage';
 
 class OrphanagesController {
- async store(request: Request, response: Response) {
-  const { 
-    name,
-    latitude,
-    longitude,
-    about,
-    instructions, 
-    opening_hours,
-    open_on_weekends
-  }  = request.body;
+  async store(request: Request, response: Response) {
+    const {
+      name,
+      latitude,
+      longitude,
+      about,
+      instructions,
+      opening_hours,
+      open_on_weekends,
+    } = request.body;
 
-  const orphanagesRepository = getRepository(Orphanage);
+    const orphanagesRepository = getRepository(Orphanage);
 
-  const orphanage = orphanagesRepository.create({
-    name,
-    latitude,
-    longitude,
-    about,
-    instructions, 
-    opening_hours,
-    open_on_weekends
-  });
+    // DOCS: 💡:bulb: GET ARRAY OF UPLOADED FILES
+    const request_images = request.files as Express.Multer.File[];
 
-  await orphanagesRepository.save(orphanage);
+    const images = request_images.map((image) => {
+      return { path: image.filename };
+    });
 
-  return response.status(201).json(orphanage);
- }
+    const orphanage = orphanagesRepository.create({
+      name,
+      latitude,
+      longitude,
+      about,
+      instructions,
+      opening_hours,
+      open_on_weekends,
+      images,
+    });
 
- async index(request: Request, response: Response) {
-  const orphanagesRepository = getRepository(Orphanage);
+    await orphanagesRepository.save(orphanage);
 
-  const orphanages = await orphanagesRepository.find();
+    return response.status(201).json(orphanage);
+  }
 
-  return response.status(200).json(orphanages);
- }
+  async index(request: Request, response: Response) {
+    const orphanagesRepository = getRepository(Orphanage);
 
- async show(request: Request, response: Response) {
-  const { id } = request.params;
+    const orphanages = await orphanagesRepository.find();
 
-  const orphanagesRepository = getRepository(Orphanage);
+    return response.status(200).json(orphanages);
+  }
 
-  const orphanage = await orphanagesRepository.findOneOrFail(id);
+  async show(request: Request, response: Response) {
+    const { id } = request.params;
 
-  return response.status(200).json(orphanage);
- }
+    const orphanagesRepository = getRepository(Orphanage);
+
+    const orphanage = await orphanagesRepository.findOneOrFail(id);
+
+    return response.status(200).json(orphanage);
+  }
 }
 
 export default new OrphanagesController();
