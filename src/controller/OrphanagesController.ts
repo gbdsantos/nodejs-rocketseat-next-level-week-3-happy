@@ -43,7 +43,9 @@ class OrphanagesController {
   async index(request: Request, response: Response) {
     const orphanagesRepository = getRepository(Orphanage);
 
-    const orphanages = await orphanagesRepository.find();
+    const orphanages = await orphanagesRepository.find({
+      relations: ['images'],
+    });
 
     return response.status(200).json(orphanages);
   }
@@ -53,7 +55,9 @@ class OrphanagesController {
 
     const orphanagesRepository = getRepository(Orphanage);
 
-    const orphanage = await orphanagesRepository.findOneOrFail(id);
+    const orphanage = await orphanagesRepository.findOneOrFail(id, {
+      relations: ['images'],
+    });
 
     return response.status(200).json(orphanage);
   }
