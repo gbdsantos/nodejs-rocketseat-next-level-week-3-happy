@@ -39,6 +39,16 @@ class OrphanagesController {
 
   return response.status(200).json(orphanages);
  }
+
+ async show(request: Request, response: Response) {
+  const { id } = request.params;
+
+  const orphanagesRepository = getRepository(Orphanage);
+
+  const orphanage = await orphanagesRepository.findOneOrFail(id);
+
+  return response.status(200).json(orphanage);
+ }
 }
 
 export default new OrphanagesController();
