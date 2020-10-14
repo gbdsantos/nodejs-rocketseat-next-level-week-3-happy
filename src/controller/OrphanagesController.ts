@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 
 import { getRepository } from 'typeorm';
+
 import Orphanage from '../models/Orphanage';
+import orphanageView from '../views/orphanages_view';
 
 class OrphanagesController {
   async store(request: Request, response: Response) {
@@ -47,7 +49,7 @@ class OrphanagesController {
       relations: ['images'],
     });
 
-    return response.status(200).json(orphanages);
+    return response.status(200).json(orphanageView.renderMany(orphanages));
   }
 
   async show(request: Request, response: Response) {
@@ -59,7 +61,7 @@ class OrphanagesController {
       relations: ['images'],
     });
 
-    return response.status(200).json(orphanage);
+    return response.status(200).json(orphanageView.render(orphanage));
   }
 }
 
